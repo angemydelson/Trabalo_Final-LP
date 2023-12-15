@@ -10,10 +10,13 @@ import Lexer
 
 %left '+'
 
-%token 
+%token
     num         { TokenNum $$ }
     '+'         { TokenAdd }
+    '-'         { TokenSub }
+    '*'         { TokenMul }
     "&&"        { TokenAnd }
+    "||"        { TokenOr }
     true        { TokenTrue }
     false       { TokenFalse }
     if          { TokenIf }
@@ -27,27 +30,42 @@ import Lexer
     '='         { TokenEq }
     let         { TokenLet }
     in          { TokenIn }
-    Bool        { TokenBoolean }
-    Num         { TokenNumber }
     ':'         { TokenColon }
+    Num         { TokenNumber }
+    Bool        { TokenBoolean }
+    "=="        { TokenEqEq }
+    "<"         { TokenLt }
+    ">"         { TokenGt }
+    "<="        { TokenLte }
+    ">="        { TokenGte }
+
 
 %%
 
-Exp         : num                           { Num $1 }
-            | true                          { BTrue }
-            | false                         { BFalse }
-            | Exp '+' Exp                   { Add $1 $3 }
-            | Exp "&&" Exp                  { And $1 $3 }
-            | if Exp then Exp else Exp      { If $2 $4 $6 }
-            | var                           { Var $1 }
-            | '\\' var ':' Type "->" Exp    { Lam $2 $4 $6 }
-            | Exp Exp                       { App $1 $2 }
-            | '(' Exp ')'                   { Paren $2 }
-            | let var '=' Exp in Exp        { Let $2 $4 $6 }
 
-Type    : Bool                              { TBool }
-        | Num                               { TNum }
-        | '(' Type "->" Type ')'            { TFun $2 $4 }
+Exp         : num                        { Num $1 }
+            | true                       { BTrue }
+            | false                      { BFalse }
+            | Exp '+' Exp                { Add $1 $3 }
+            | Exp '-' Exp                { Sub $1 $3 }
+            | Exp '*' Exp                { Mul $1 $3 }
+            | Exp "&&" Exp               { And $1 $3 }
+            | Exp "||" Exp               { Or $1 $3 }
+            | if Exp then Exp else Exp   { If $2 $4 $6 }
+            | var                        { Var $1 }
+            | '\\' var ':' Type "->" Exp { Lam $2 $4 $6 }
+            | '(' Exp ')'                { Paren $2 }
+            | let var '=' Exp in Exp     { Let $2 $4 $6 }
+            | Exp "==" Exp               { EqEq $1 $3 }
+            | Exp "<" Exp                { Lt $1 $3 }
+            | Exp ">" Exp                { Gt $1 $3 }
+            | Exp "<=" Exp               { Lte $1 $3 }
+            | Exp ">=" Exp               { Gte $1 $3 }
+
+Type    : Bool                           { TBool }
+        | Num                            { TNum }
+        | '(' Type "->" Type ')'         { TFun $2 $4 }
+
 
 {
 
