@@ -75,7 +75,8 @@ step (App (Lam x t b) e2) | isValue e2 = subst x e2 b
 step (App e1 e2) = App (step e1) e2
 step (Let v e1 e2) | isValue e1 = subst v e1 e2
                    | otherwise = Let v (step e1) e2
-
+step (Read) = Var "leia"  -- Supondo que a leitura armazene o valor na variável "input"
+step (Print e) = App (Var "escreva") e  -- Supondo que "print" seja uma função que imprime o valor
 
 step e = error (show e)
 
@@ -84,3 +85,13 @@ step e = error (show e)
 eval :: Expr -> Expr 
 eval e | isValue e = e 
        | otherwise = eval (step e)
+
+-- steps :: Expr -> IO Expr
+-- steps Read = do
+--   putStr "Digite um número: "
+--   input <- getLine
+--   return (Num (read input))
+-- steps (Print e) = do
+--   result <- steps e
+--   putStrLn (show result)
+--   return result

@@ -38,6 +38,9 @@ import Lexer
     ">"         { TokenGt }
     "<="        { TokenLte }
     ">="        { TokenGte }
+    leia        { TokenRead}
+    escreva     { TokenPrint}
+    
 
 
 %%
@@ -61,6 +64,8 @@ Exp         : num                        { Num $1 }
             | Exp ">" Exp                { Gt $1 $3 }
             | Exp "<=" Exp               { Lte $1 $3 }
             | Exp ">=" Exp               { Gte $1 $3 }
+            | leia                       { Read }
+            | escreva Exp                { Print $2 }
 
 Type    : Bool                           { TBool }
         | Num                            { TNum }

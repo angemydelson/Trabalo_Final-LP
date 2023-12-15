@@ -66,6 +66,11 @@ typeof ctx (Let v e1 e2) = case typeof ctx e1 of
                             Just t1 -> typeof ((v, t1):ctx) e2
                             _ -> Nothing
 
+typeof ctx Read = Just TNum  -- Supondo que a leitura resulta em um número
+typeof ctx (Print e) = case typeof ctx e of
+                        Just _ -> Just TNum  -- Supondo que a impressão resulta em um número
+                        _      -> Nothing
+                        
 typecheck :: Expr -> Expr 
 typecheck e = case typeof [] e of 
                 Just _ -> e 

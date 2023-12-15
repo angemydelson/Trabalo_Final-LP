@@ -21,7 +21,8 @@ data Expr = BTrue
           | App Expr Expr
           | Paren Expr
           | Let String Expr Expr
-
+          | Read 
+          | Print Expr
           
           deriving Show
 
@@ -59,13 +60,14 @@ data Token = TokenTrue
            | TokenColon
            | TokenBoolean
            | TokenNumber
-
+           | TokenRead
+           | TokenPrint
 
            deriving (Show, Eq)
 
 -- símbolos disponíveis na linguagem (+ e &&)
 isSymb :: Char -> Bool
-isSymb c = c `elem` "+-*&|\\->()=:<,;#"
+isSymb c = c `elem` "+-*&|\\->()=:<,;#<>"
 
 -- função que lê caracteres e reconhece símbolos válidos da linguagem
 lexer :: String -> [Token]
@@ -118,5 +120,6 @@ lexKW cs = case span isAlpha cs of
              ("in", rest) -> TokenIn : lexer rest
              ("Num", rest) -> TokenNumber: lexer rest
              ("Bool", rest) -> TokenBoolean : lexer rest
-
+             ("leia", rest) -> TokenRead : lexer rest
+             ("escreva", rest) -> TokenPrint : lexer rest
              (var, rest) -> TokenVar var : lexer rest
